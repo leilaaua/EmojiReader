@@ -63,6 +63,7 @@
                                     <outlet property="descriptionLabel" destination="9gz-bG-khc" id="AZ4-So-vuA"/>
                                     <outlet property="emojiLabel" destination="w9p-UW-ufY" id="VRm-9l-VFj"/>
                                     <outlet property="nameLabel" destination="poR-g2-zsn" id="3mp-ZT-J0R"/>
+                                    <segue destination="NwO-TQ-dGk" kind="show" identifier="editEmoji" id="uS3-kT-kgo"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -75,7 +76,7 @@
                     <navigationItem key="navigationItem" title="Emoji Reader" id="Xw4-c5-QFT">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="M2b-Rf-0g5">
                             <connections>
-                                <segue destination="NwO-TQ-dGk" kind="show" id="Xs1-6Q-3WZ"/>
+                                <segue destination="NwO-TQ-dGk" kind="show" identifier="" id="Xs1-6Q-3WZ"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -184,8 +185,16 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="jPd-QM-PaL">
-                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="cancel" id="Cht-0t-AUx"/>
-                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="NwF-Ku-S0g"/>
+                        <barButtonItem key="leftBarButtonItem" style="done" systemItem="cancel" id="Cht-0t-AUx">
+                            <connections>
+                                <segue destination="qSy-Ih-tq8" kind="unwind" identifier="saveSegue" unwindAction="unwindSegueWithSegue:" id="z3v-5o-Dw8"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="save" id="NwF-Ku-S0g">
+                            <connections>
+                                <segue destination="qSy-Ih-tq8" kind="unwind" unwindAction="unwindSegueWithSegue:" id="V5i-5Y-azf"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="descriptionTextField" destination="8uu-2L-sbq" id="2Px-uG-1sz"/>
@@ -195,6 +204,7 @@
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e3V-pa-YUM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="qSy-Ih-tq8" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="3108.6956521739135" y="87.723214285714278"/>
         </scene>
@@ -234,6 +244,9 @@
             <point key="canvasLocation" x="888" y="88"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="uS3-kT-kgo"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

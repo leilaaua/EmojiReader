@@ -9,25 +9,55 @@ import UIKit
 
 class EmojiTableViewController: UITableViewController {
 
-    var emoji = Emoji.getEmoji()
+    var objects = [
+        Emoji(emoji: "🥰", name: "Love", description: "Let's love each other", isFavorite: false),
+        Emoji(emoji: "⚽️", name: "Football", description: "Let's play football", isFavorite: false),
+        Emoji(emoji: "🐱", name: "Cat", description: "Cat is the cutest animal", isFavorite: false)
+    ]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.leftBarButtonItem = self.editButtonItem
     }
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == "editEmoji" else { return }
+        guard let indexPath = tableView.indexPathForSelectedRow else { return }
+        let emoji = objects[indexPath.row]
+        guard let navigationVC = segue.destination as? UINavigationController else { return }
+        guard let newEmojiVC = navigationVC.topViewController as? NewEmojiTableViewController else { return }
+        
+        newEmojiVC.emoji = emoji
+        newEmojiVC.title = "Edit"
+    }
+    
+    @IBAction func unwindSegue(segue: UIStoryboardSegue) {
+        guard segue.identifier == "saveSegue" else { return }
+        guard let sourceVC = segue.source as? NewEmojiTableViewController else { return }
+        let emoji = sourceVC.emoji
+        
+        if let selectedIndexPath = tableView.indexPathForSelectedRow {
+            objects[selectedIndexPath.row] = emoji
+            tableView.reloadRows(at: [selectedIndexPath], with: .fade)
+        } else {
+            let newIndexPath = IndexPath(row: objects.count, section: 0)
+            objects.append(emoji)
+            tableView.insertRows(at: [newIndexPath], with: .fade)
+        }
+    }
+    
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        emoji.count
+        objects.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! EmojiTableViewCell
-        let object = emoji[indexPath.row]
+        let object = objects[indexPath.row]
         cell.setEmoji(object: object)
     
         return cell
@@ -39,7 +69,7 @@ class EmojiTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            emoji.remove(at: indexPath.row)
+            objects.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
@@ -49,8 +79,8 @@ class EmojiTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let moveEmoji = emoji.remove(at: sourceIndexPath.row)
-        emoji.insert(moveEmoji, at: destinationIndexPath.row)
+        let moveEmoji = objects.remove(at: sourceIndexPath.row)
+        objects.insert(moveEmoji, at: destinationIndexPath.row)
         tableView.reloadData()
     }
     
@@ -62,7 +92,7 @@ class EmojiTableViewController: UITableViewController {
     
     func doneAction(at indexPath: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .destructive, title: "Done") { (action, view, completion) in
-            self.emoji.remove(at: indexPath.row)
+            self.objects.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
             completion(true)
         }
@@ -73,13 +103,13 @@ class EmojiTableViewController: UITableViewController {
     }
     
     func favoriteAction(at indexPath: IndexPath) -> UIContextualAction {
-        var emoji = emoji[indexPath.row]
+        var objects = objects[indexPath.row]
         let favoriteAction = UIContextualAction(style: .normal, title: "Favorite") { (action, view, completion) in
-            emoji.isFavorite.toggle()
-            self.emoji[indexPath.row] = emoji
+            objects.isFavorite.toggle()
+            self.objects[indexPath.row] = objects
             completion(true)
         }
-        favoriteAction.backgroundColor = emoji.isFavorite ? .systemPurple : .systemGray
+        favoriteAction.backgroundColor = objects.isFavorite ? .systemPurple : .systemGray
         favoriteAction.image = UIImage(systemName: "heart")
         return favoriteAction
     }
